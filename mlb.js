@@ -26,3 +26,21 @@ function get_team_record(team) {
 
     return null;
 }
+
+function get_game_information(team) {
+    const games_json = JSON.parse(httpGet(mlb_games_today_url));
+    var key_game = null;
+    for (var game of games_json["dates"][0]["games"]) {
+        if (game["teams"]["away"]["team"]["name"] == team || game["teams"]["home"]["team"]["name"] == team) {
+            key_game = game;
+        }
+    }
+    if (key_game == null)
+        return null;
+
+    return {oponent: key_game["teams"]["away"]["team"]["name"] == team 
+                ? key_game["teams"]["home"]["team"]["name"] : key_game["teams"]["away"]["team"]["name"],
+            home: key_game["teams"]["home"]["team"]["name"] == team,
+            time: key_game["gameDate"]
+            }
+}

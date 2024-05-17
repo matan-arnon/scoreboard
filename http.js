@@ -4,7 +4,6 @@ function httpGet(URL) {
     request.send(null);
 
     if (request.status === 200) {
-        console.log(request.responseText);
         return request.responseText;
     }
     return null;

@@ -11,10 +11,13 @@ window.onload = function() {
     chrome.storage.sync.get({favoriteTeam:"nope"}, (items) =>{
         if (items.favoriteTeam != "nope") {
             var mlb_team = document.getElementById("fav-mlb-team");
-            mlb_team.textContent = items.favoriteTeam;
+            mlb_team.textContent = `${items.favoriteTeam} (${get_team_record(items.favoriteTeam)})`;
             console.log("fav team", items.favoriteTeam);
-            var team_record = document.getElementById("fav-team-record");
-            team_record.textContent = get_team_record(items.favoriteTeam);
+            var todays_game = get_game_information(items.favoriteTeam);
+            var location = todays_game.home ? "vs" : "@"
+            var game_information = `${location} ${todays_game.oponent}`;
+            var gameday = document.getElementById("gameday");
+            gameday.textContent = game_information;
         }
     })
 }
