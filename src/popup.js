@@ -30,6 +30,17 @@ window.onload = function() {
                     var score = `${todays_game.live_info.away.runs} - ${todays_game.live_info.home.runs}\t${todays_game.live_info.inning}`;
                     live_info.textContent = score;
                 }
+
+                var icon = document.createElement("i");
+                icon.setAttribute("style", "display:inline;font-size:24px;color:black");
+                icon.setAttribute("class", "material-icons");
+                if (todays_game.live_info.isTop) {
+                    icon.textContent = "arrow_drop_up";
+                }
+                else {
+                    icon.textContent = "arrow_drop_down";
+                }
+                live_info.insertAdjacentElement("beforeend", icon);
             }
         }
     })
