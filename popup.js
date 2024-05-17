@@ -15,7 +15,7 @@ window.onload = function() {
             console.log("fav team", items.favoriteTeam);
             var todays_game = get_game_information(items.favoriteTeam);
             var location = todays_game.home ? "vs" : "@"
-            var game_information = `${location} ${todays_game.oponent}`;
+            var game_information = `${location} ${todays_game.oponent} (${todays_game.oponent_record})`;
             var gameday = document.getElementById("gameday");
             gameday.textContent = game_information;
         }

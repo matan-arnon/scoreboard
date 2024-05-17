@@ -13,14 +13,22 @@ function get_mlb_teams() {
     return mlb_teams
 }
 
+function get_record_from_team_item(team_json) {
+    return `${team_json["leagueRecord"]["wins"]}-${team_json["leagueRecord"]["losses"]}`
+}
+
+function get_name_from_team_item(team_json) {
+    return team_json["team"]["name"]
+}
+
 function get_team_record(team) {
     const games_json = JSON.parse(httpGet(mlb_games_today_url));
     for (var game of games_json["dates"][0]["games"]) {
-        if (game["teams"]["away"]["team"]["name"] == team) {
-            return `${game["teams"]["away"]["leagueRecord"]["wins"]}-${game["teams"]["away"]["leagueRecord"]["losses"]}`
+        if (get_name_from_team_item(game["teams"]["away"]) == team) {
+            return get_record_from_team_item(game["teams"]["away"]);
         }
-        if (game["teams"]["home"]["team"]["name"] == team) {
-            return `${game["teams"]["home"]["leagueRecord"]["wins"]}-${game["teams"]["home"]["leagueRecord"]["losses"]}`
+        if (get_name_from_team_item(game["teams"]["home"]) == team) {
+            return get_record_from_team_item(game["teams"]["home"]);
         }
     }
 
@@ -31,16 +39,18 @@ function get_game_information(team) {
     const games_json = JSON.parse(httpGet(mlb_games_today_url));
     var key_game = null;
     for (var game of games_json["dates"][0]["games"]) {
-        if (game["teams"]["away"]["team"]["name"] == team || game["teams"]["home"]["team"]["name"] == team) {
+        if (get_name_from_team_item(game["teams"]["away"]) == team || get_name_from_team_item(game["teams"]["home"]) == team) {
             key_game = game;
         }
     }
     if (key_game == null)
         return null;
-
-    return {oponent: key_game["teams"]["away"]["team"]["name"] == team 
-                ? key_game["teams"]["home"]["team"]["name"] : key_game["teams"]["away"]["team"]["name"],
-            home: key_game["teams"]["home"]["team"]["name"] == team,
+    var home_team = key_game["teams"]["home"]["team"]["name"] == team;
+    return {
+            oponent: home_team 
+                ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
+            home: home_team,
+            oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
             time: key_game["gameDate"]
             }
 }
