@@ -15,12 +15,21 @@ window.onload = function() {
             console.log("fav team", items.favoriteTeam);
             var todays_game = get_game_information(items.favoriteTeam);
             var location = todays_game.home ? "vs" : "@"
+            mlb_team.textContent += ` ${location} ${todays_game.oponent} (${todays_game.oponent_record})`;
             if (todays_game.game_status == "S" || todays_game.game_status == "P") {
-                var game_information = `${location} ${todays_game.oponent} (${todays_game.oponent_record})`;
-                var gameday = document.getElementById("gameday");
-                gameday.textContent = game_information;
-                var start_time = document.getElementById("start-time");
-                start_time.textContent = new Date(todays_game.time).toLocaleString();
+                var start_time = document.getElementById("gameday");
+                start_time.textContent = `Start time: ${new Date(todays_game.time).toLocaleString()}`;
+            }
+            if (todays_game.game_status = "I") {
+                var live_info = document.getElementById("gameday");
+                if (todays_game.home) {
+                    var score = `${todays_game.live_info.home.runs} - ${todays_game.live_info.away.runs}`;
+                    live_info.textContent = score;
+                }
+                else {
+                    var score = `${todays_game.live_info.away.runs} - ${todays_game.live_info.home.runs}\t${todays_game.live_info.inning}`;
+                    live_info.textContent = score;
+                }
             }
         }
     })

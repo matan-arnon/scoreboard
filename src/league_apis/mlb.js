@@ -1,3 +1,5 @@
+var base_url = "https://statsapi.mlb.com"
+
 var mlb_games_today_url = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
 var baseball_teams_url = "https://statsapi.mlb.com/api/v1/teams"
 
@@ -46,12 +48,43 @@ function get_game_information(team) {
     if (key_game == null)
         return null;
     var home_team = key_game["teams"]["home"]["team"]["name"] == team;
-    return {
+    if (key_game["status"]["codedGameState"] == "I") {
+        return {
             oponent: home_team 
                 ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
             home: home_team,
             oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
             time: key_game["gameDate"],
-            game_status: key_game["status"]["codedGameState"]
-            }
+            game_status: key_game["status"]["codedGameState"], 
+            live_info: get_live_game_information(key_game)
+        }
+    }
+    return {
+        oponent: home_team 
+            ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
+        home: home_team,
+        oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
+        time: key_game["gameDate"],
+        game_status: key_game["status"]["codedGameState"]
+    }
+}
+
+function get_live_game_information(game) {
+    const live_game_info = JSON.parse(httpGet(base_url + game["link"]))["liveData"]["linescore"];
+    return {
+        inning: live_game_info["currentInningOrdinal"],
+        isTop: live_game_info["isTopInning"],
+        home: {
+            runs: live_game_info["teams"]["home"]["runs"],
+            hits: live_game_info["teams"]["home"]["hits"],
+            errors: live_game_info["teams"]["home"]["errors"],
+            LOB: live_game_info["teams"]["home"]["leftOnBase"]
+          },
+          away: {
+            runs: live_game_info["teams"]["away"]["runs"],
+            hits: live_game_info["teams"]["away"]["hits"],
+            errors: live_game_info["teams"]["away"]["errors"],
+            LOB: live_game_info["teams"]["away"]["leftOnBase"]
+          }
+    }
 }
