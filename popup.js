@@ -7,4 +7,12 @@ window.onload = function() {
           window.open(chrome.runtime.getURL('options.html'));
         }
     });
+
+    chrome.storage.sync.get({favoriteTeam:"nope"}, (items) =>{
+        if (items.favoriteTeam != "nope") {
+            var mlb_team = document.getElementById("fav-mlb-team");
+            mlb_team.textContent += items.favoriteTeam;
+            console.log("fav team", items.favoriteTeam)
+        }
+    })
 }
