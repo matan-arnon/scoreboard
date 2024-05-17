@@ -4,14 +4,22 @@
     "version": "1.0",
     "description": "Always know the score!",
     "permissions": [
-      "activeTab",
-      "webRequest"
+      "storage",
+      "webRequest",
+      "notifications"
+    ],
+    "host_permissions": [
+      "http://statsapi.mlb.com/*"
     ],
     "background": {
       "service_worker": "background.js"
     },
     "action": {
       "default_popup": "popup.html"
+    },
+    "options_ui": {
+      "page": "options.html",
+      "open_in_tab": true
     },
     "icons": {
       "225": "scoreboard-logo.png"
