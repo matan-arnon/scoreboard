@@ -59,6 +59,16 @@ function get_game_information(team) {
             live_info: get_live_game_information(key_game)
         }
     }
+    if (key_game["status"]["codedGameState"] == "O" || key_game["status"]["codedGameState"] == "F") {
+        return {
+            oponent: home_team 
+                ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
+            home: home_team,
+            oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
+            final_info: get_final_game_information(key_game),
+            game_status: key_game["status"]["codedGameState"]
+        }
+    }
     return {
         oponent: home_team 
             ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
@@ -77,6 +87,26 @@ function get_live_game_information(game) {
         inning: linescore["currentInningOrdinal"],
         isTop: linescore["isTopInning"],
         outs: liveData["plays"]["currentPlay"]["count"]["outs"],
+        home: {
+            runs: linescore["teams"]["home"]["runs"],
+            hits: linescore["teams"]["home"]["hits"],
+            errors: linescore["teams"]["home"]["errors"],
+            LOB: linescore["teams"]["home"]["leftOnBase"]
+          },
+          away: {
+            runs: linescore["teams"]["away"]["runs"],
+            hits: linescore["teams"]["away"]["hits"],
+            errors: linescore["teams"]["away"]["errors"],
+            LOB: linescore["teams"]["away"]["leftOnBase"]
+          }
+    }
+}
+
+function get_final_game_information(game) {
+    const liveData = JSON.parse(httpGet(base_url + game["link"]))["liveData"]
+    const linescore = liveData["linescore"];
+
+    return {
         home: {
             runs: linescore["teams"]["home"]["runs"],
             hits: linescore["teams"]["home"]["hits"],

@@ -1,6 +1,6 @@
 function prepareInningIcon(isTop) {
     var inningIcon = document.createElement("i");
-    inningIcon.setAttribute("style", "display:inline;font-size:24px;color:black");
+    inningIcon.setAttribute("style", "display:inline;font-size:20px;color:black");
     inningIcon.setAttribute("class", "material-icons");
     if (isTop) {
         inningIcon.textContent = "arrow_drop_up";
@@ -13,7 +13,7 @@ function prepareInningIcon(isTop) {
 
 function prepareOutsIcon(isOut) {
     var outsIcon = document.createElement("i");
-    outsIcon.setAttribute("style", "display:inline;font-size:24px;color:black");
+    outsIcon.setAttribute("style", "display:inline;font-size:15px;color:black");
     outsIcon.setAttribute("class", "material-icons");
     if (isOut) {
         outsIcon.textContent = "radio_button_checked";
@@ -45,18 +45,20 @@ window.onload = function() {
                 var start_time = document.getElementById("gameday");
                 start_time.textContent = `Start time: ${new Date(todays_game.time).toLocaleString()}`;
             }
-            if (todays_game.game_status = "I") {
+            if (todays_game.game_status == "I") {
                 var live_info = document.getElementById("gameday");
                 if (todays_game.home) {
                     var score = `${todays_game.live_info.home.runs} - ${todays_game.live_info.away.runs}`;
                     live_info.textContent = score;
                 }
                 else {
-                    var score = `${todays_game.live_info.away.runs} - ${todays_game.live_info.home.runs}\t${todays_game.live_info.inning}`;
+                    var score = `${todays_game.live_info.away.runs} - ${todays_game.live_info.home.runs}`;
                     live_info.textContent = score;
                 }
                 var inningIcon = prepareInningIcon(todays_game.live_info.isTop);
-                live_info.insertAdjacentElement("beforeend", inningIcon);
+                var inningOuts = document.getElementById("inning-outs")
+                inningOuts.textContent = todays_game.live_info.inning;
+                inningOuts.insertAdjacentElement("beforeend", inningIcon);
                 var outsIcon;
                 for (var i = 0; i < todays_game.live_info.outs; i++) {
                     outsIcon = prepareOutsIcon(true);
@@ -67,11 +69,22 @@ window.onload = function() {
                         outsIcon.insertAdjacentElement("beforeend", prepareOutsIcon(false));
                     }
                     else {
-                        inningIcon.insertAdjacentElement("beforeend", prepareOutsIcon(false))
+                        inningOuts.insertAdjacentElement("beforeend", prepareOutsIcon(false));
                     }
                 }
             }
-            
+            if (todays_game.game_status == "O" || todays_game.game_status == "F") {
+                var score_element = document.getElementById("gameday");
+                var inningOuts = document.getElementById("inning-outs")
+                inningOuts.textContent = "Final"
+                if (todays_game.home) {
+                    var final_score = `${todays_game.final_info.home.runs} - ${todays_game.final_info.away.runs}`;
+                }
+                else {
+                    var final_score = `${todays_game.final_info.away.runs} - ${todays_game.final_info.home.runs}`;
+                }
+                score_element.textContent = final_score;
+            }
         }
     })
 }
