@@ -63,7 +63,12 @@ window.onload = function() {
                     inningIcon.insertAdjacentElement("beforeend", outsIcon);
                 }
                 for (var i = 0; i < 3 - todays_game.live_info.outs; i++) {
-                    outsIcon.insertAdjacentElement("beforeend", false);
+                    if (todays_game.live_info.outs > 0) {
+                        outsIcon.insertAdjacentElement("beforeend", prepareOutsIcon(false));
+                    }
+                    else {
+                        inningIcon.insertAdjacentElement("beforeend", prepareOutsIcon(false))
+                    }
                 }
             }
             
