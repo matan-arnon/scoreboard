@@ -70,21 +70,24 @@ function get_game_information(team) {
 }
 
 function get_live_game_information(game) {
-    const live_game_info = JSON.parse(httpGet(base_url + game["link"]))["liveData"]["linescore"];
+    const liveData = JSON.parse(httpGet(base_url + game["link"]))["liveData"]
+    const linescore = liveData["linescore"];
+
     return {
-        inning: live_game_info["currentInningOrdinal"],
-        isTop: live_game_info["isTopInning"],
+        inning: linescore["currentInningOrdinal"],
+        isTop: linescore["isTopInning"],
+        outs: liveData["plays"]["currentPlay"]["count"]["outs"],
         home: {
-            runs: live_game_info["teams"]["home"]["runs"],
-            hits: live_game_info["teams"]["home"]["hits"],
-            errors: live_game_info["teams"]["home"]["errors"],
-            LOB: live_game_info["teams"]["home"]["leftOnBase"]
+            runs: linescore["teams"]["home"]["runs"],
+            hits: linescore["teams"]["home"]["hits"],
+            errors: linescore["teams"]["home"]["errors"],
+            LOB: linescore["teams"]["home"]["leftOnBase"]
           },
           away: {
-            runs: live_game_info["teams"]["away"]["runs"],
-            hits: live_game_info["teams"]["away"]["hits"],
-            errors: live_game_info["teams"]["away"]["errors"],
-            LOB: live_game_info["teams"]["away"]["leftOnBase"]
+            runs: linescore["teams"]["away"]["runs"],
+            hits: linescore["teams"]["away"]["hits"],
+            errors: linescore["teams"]["away"]["errors"],
+            LOB: linescore["teams"]["away"]["leftOnBase"]
           }
     }
 }

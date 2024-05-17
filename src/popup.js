@@ -1,3 +1,28 @@
+function prepareInningIcon(isTop) {
+    var inningIcon = document.createElement("i");
+    inningIcon.setAttribute("style", "display:inline;font-size:24px;color:black");
+    inningIcon.setAttribute("class", "material-icons");
+    if (isTop) {
+        inningIcon.textContent = "arrow_drop_up";
+    }
+    else {
+        inningIcon.textContent = "arrow_drop_down";
+    }
+    return inningIcon;
+}
+
+function prepareOutsIcon(isOut) {
+    var outsIcon = document.createElement("i");
+    outsIcon.setAttribute("style", "display:inline;font-size:24px;color:black");
+    outsIcon.setAttribute("class", "material-icons");
+    if (isOut) {
+        outsIcon.textContent = "radio_button_checked";
+    }
+    else {
+        outsIcon.textContent = "radio_button_unchecked";
+    }
+    return outsIcon;
+}
 
 window.onload = function() {
     document.querySelector('#go-to-options').addEventListener('click', function() {
@@ -30,18 +55,18 @@ window.onload = function() {
                     var score = `${todays_game.live_info.away.runs} - ${todays_game.live_info.home.runs}\t${todays_game.live_info.inning}`;
                     live_info.textContent = score;
                 }
-
-                var icon = document.createElement("i");
-                icon.setAttribute("style", "display:inline;font-size:24px;color:black");
-                icon.setAttribute("class", "material-icons");
-                if (todays_game.live_info.isTop) {
-                    icon.textContent = "arrow_drop_up";
+                var inningIcon = prepareInningIcon(todays_game.live_info.isTop);
+                live_info.insertAdjacentElement("beforeend", inningIcon);
+                var outsIcon;
+                for (var i = 0; i < todays_game.live_info.outs; i++) {
+                    outsIcon = prepareOutsIcon(true);
+                    inningIcon.insertAdjacentElement("beforeend", outsIcon);
                 }
-                else {
-                    icon.textContent = "arrow_drop_down";
+                for (var i = 0; i < 3 - todays_game.live_info.outs; i++) {
+                    outsIcon.insertAdjacentElement("beforeend", false);
                 }
-                live_info.insertAdjacentElement("beforeend", icon);
             }
+            
         }
     })
 }
