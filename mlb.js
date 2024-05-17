@@ -51,6 +51,7 @@ function get_game_information(team) {
                 ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
             home: home_team,
             oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
-            time: key_game["gameDate"]
+            time: key_game["gameDate"],
+            game_status: key_game["status"]["codedGameState"]
             }
 }
