@@ -1,11 +1,11 @@
 var base_url = "https://statsapi.mlb.com"
 
-var mlb_games_today_url = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
-var baseball_teams_url = "https://statsapi.mlb.com/api/v1/teams"
+var mlb_games_url = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
+var mlb_teams_url = "https://statsapi.mlb.com/api/v1/teams"
 
 function get_mlb_teams() {
     var mlb_teams = [];
-    const teams_json = JSON.parse(httpGet(baseball_teams_url));
+    const teams_json = JSON.parse(httpGet(mlb_teams_url));
     for (var team of teams_json["teams"]) {
         if (team["league"]["name"] == "American League" || team["league"]["name"] == "National League") {
             mlb_teams.push(team["name"]);
@@ -13,6 +13,36 @@ function get_mlb_teams() {
     }
 
     return mlb_teams
+}
+
+function get_game_from_json(team, game_json) {
+    for (var game of game_json["dates"][0]["games"]) {
+        if (get_name_from_team_item(game["teams"]["away"]) == team || get_name_from_team_item(game["teams"]["home"]) == team) {
+            return game;
+        }
+    }
+
+    return null;
+}
+
+function get_next_game(team) {
+    var current_game = get_game_from_json(team, JSON.parse(httpGet(mlb_games_url)));
+    if(current_game != null) {
+        return current_game;
+    }
+
+    var next_date = new Date();
+    for (var i=0; i<5; i++){
+        next_date.setDate(next_date.getDate()+1);
+        var next_date_string = next_date.toISOString().split('T')[0];
+        var game = get_game_from_json(team, 
+            JSON.parse(httpGet(`${mlb_games_url}&startDate=${next_date_string}&endDate=${next_date_string}`)));
+        if (game != null) {
+            return game;
+        }
+    }
+
+    return null;
 }
 
 function get_record_from_team_item(team_json) {
@@ -24,27 +54,20 @@ function get_name_from_team_item(team_json) {
 }
 
 function get_team_record(team) {
-    const games_json = JSON.parse(httpGet(mlb_games_today_url));
-    for (var game of games_json["dates"][0]["games"]) {
-        if (get_name_from_team_item(game["teams"]["away"]) == team) {
-            return get_record_from_team_item(game["teams"]["away"]);
-        }
-        if (get_name_from_team_item(game["teams"]["home"]) == team) {
-            return get_record_from_team_item(game["teams"]["home"]);
-        }
+    var game = get_next_game(team);
+    if (game == null) {
+        return nulll;
     }
-
-    return null;
+    if (get_name_from_team_item(game["teams"]["away"]) == team) {
+        return get_record_from_team_item(game["teams"]["away"]);
+    }
+    if (get_name_from_team_item(game["teams"]["home"]) == team) {
+        return get_record_from_team_item(game["teams"]["home"]);
+    }
 }
 
 function get_game_information(team) {
-    const games_json = JSON.parse(httpGet(mlb_games_today_url));
-    var key_game = null;
-    for (var game of games_json["dates"][0]["games"]) {
-        if (get_name_from_team_item(game["teams"]["away"]) == team || get_name_from_team_item(game["teams"]["home"]) == team) {
-            key_game = game;
-        }
-    }
+    var key_game = get_next_game(team);
     if (key_game == null)
         return null;
     var home_team = key_game["teams"]["home"]["team"]["name"] == team;
