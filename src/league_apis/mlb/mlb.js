@@ -144,3 +144,7 @@ function get_final_game_information(game) {
           }
     }
 }
+
+function get_icon_path(team) {
+    return `mlb/${icon_paths[team]}`;
+}

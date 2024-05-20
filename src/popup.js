@@ -24,6 +24,12 @@ function prepareOutsIcon(isOut) {
     return outsIcon;
 }
 
+function prepareTeamIcon(team) {
+    let img = document.createElement('img');
+    img.src = `../icons/${get_icon_path(team)}`;
+    return img;
+}
+
 window.onload = function() {
     document.querySelector('#go-to-options').addEventListener('click', function() {
         if (chrome.runtime.openOptionsPage) {
@@ -41,6 +47,12 @@ window.onload = function() {
             var todays_game = get_game_information(items.favoriteTeam);
             var location = todays_game.home ? "vs" : "@"
             mlb_team.textContent += ` ${location} ${todays_game.oponent} (${todays_game.oponent_record})`;
+
+            var team_icon = prepareTeamIcon(items.favoriteTeam);
+            mlb_team.insertAdjacentElement("afterend", team_icon);
+            var oponent_icon = prepareTeamIcon(todays_game.oponent);
+            team_icon.insertAdjacentElement("afterend", oponent_icon);
+            
             if (todays_game.game_status == "S" || todays_game.game_status == "P") {
                 var start_time = document.getElementById("gameday");
                 start_time.textContent = `Start time: ${new Date(todays_game.time).toLocaleString()}`;
