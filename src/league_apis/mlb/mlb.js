@@ -1,6 +1,6 @@
 var base_url = "https://statsapi.mlb.com"
 
-var mlb_games_url = "http://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
+var mlb_games_url = "https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
 var mlb_teams_url = "https://statsapi.mlb.com/api/v1/teams"
 
 function get_mlb_teams() {

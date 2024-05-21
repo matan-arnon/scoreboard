@@ -39,20 +39,20 @@ window.onload = function() {
         }
     });
 
-    chrome.storage.sync.get({favoriteTeam:"nope"}, (items) =>{
-        if (items.favoriteTeam != "nope") {
+    chrome.storage.sync.get({favoriteMlbTeam:"nope"}, (items) =>{
+        if (items.favoriteMlbTeam != "nope") {
             var mlb_team = document.getElementById("fav-mlb-team");
-            mlb_team.textContent = `${items.favoriteTeam} (${get_team_record(items.favoriteTeam)})`;
-            console.log("fav team", items.favoriteTeam);
-            var todays_game = get_game_information(items.favoriteTeam);
+            mlb_team.textContent = `${items.favoriteMlbTeam} (${get_team_record(items.favoriteMlbTeam)})`;
+            console.log("fav team", items.favoriteMlbTeam);
+            var todays_game = get_game_information(items.favoriteMlbTeam);
             var location = todays_game.home ? "vs" : "@"
             mlb_team.textContent += ` ${location} ${todays_game.oponent} (${todays_game.oponent_record})`;
 
-            var team_icon = prepareTeamIcon(items.favoriteTeam);
+            var team_icon = prepareTeamIcon(items.favoriteMlbTeam);
             mlb_team.insertAdjacentElement("afterend", team_icon);
             var oponent_icon = prepareTeamIcon(todays_game.oponent);
             team_icon.insertAdjacentElement("afterend", oponent_icon);
-            
+
             if (todays_game.game_status == "S" || todays_game.game_status == "P") {
                 var start_time = document.getElementById("gameday");
                 start_time.textContent = `Start time: ${new Date(todays_game.time).toLocaleString()}`;
