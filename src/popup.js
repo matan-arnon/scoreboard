@@ -39,7 +39,7 @@ window.onload = function() {
         }
     });
 
-    chrome.storage.sync.get({favoriteMlbTeam:"nope"}, (items) =>{
+    chrome.storage.sync.get({favoriteMlbTeam:"nope", favoriteNbaTeam:"nope"}, (items) =>{
         if (items.favoriteMlbTeam != "nope") {
             var mlb_team = document.getElementById("fav-mlb-team");
             mlb_team.textContent = `${items.favoriteMlbTeam} (${get_team_record(items.favoriteMlbTeam)})`;
@@ -97,6 +97,10 @@ window.onload = function() {
                 }
                 score_element.textContent = final_score;
             }
+        }
+        if (items.favoriteNbaTeam != "nope") {
+            var nba_team_header = document.getElementById("fav-nba-team");
+            nba_team_header.textContent = items.favoriteNbaTeam;
         }
     })
 }
