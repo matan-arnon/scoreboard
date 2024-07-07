@@ -1,26 +1,26 @@
-var myParent = document.body;
+const myParent = document.body;
 
 //Create and append mlb select list
-var mlbSelectList = document.createElement("select");
+let mlbSelectList = document.createElement("select");
 mlbSelectList.id = "mlb-team";
 myParent.appendChild(mlbSelectList);
 mlb_teams = get_mlb_teams()
 //Create and append the options
-for (var i = 0; i < mlb_teams.length; i++) {
-    var mlb_option = document.createElement("option");
+for (let i = 0; i < mlb_teams.length; i++) {
+    let mlb_option = document.createElement("option");
     mlb_option.value = mlb_teams[i];
     mlb_option.text = mlb_teams[i];
     mlbSelectList.appendChild(mlb_option);
 }
 
 //Create and append mlb select list
-var nbaSelectList = document.createElement("select");
+let nbaSelectList = document.createElement("select");
 nbaSelectList.id = "nba-team";
 myParent.appendChild(nbaSelectList);
 nba_teams = get_nba_teams()
 //Create and append the options
-for (var i = 0; i < nba_teams.length; i++) {
-    var nba_option = document.createElement("option");
+for (let i = 0; i < nba_teams.length; i++) {
+    let nba_option = document.createElement("option");
     nba_option.value = nba_teams[i];
     nba_option.text = nba_teams[i];
     nbaSelectList.appendChild(nba_option);

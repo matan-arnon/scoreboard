@@ -1,13 +1,13 @@
-var base_url = "https://statsapi.mlb.com"
+const base_url = "https://statsapi.mlb.com";
 
-var mlb_games_url = "https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1"
-var mlb_teams_url = "https://statsapi.mlb.com/api/v1/teams"
+const mlb_games_url = `${base_url}/api/v1/schedule/games/?sportId=1`;
+const mlb_teams_url = `${base_url}/api/v1/teams`;
 
 function get_mlb_teams() {
-    var mlb_teams = [];
+    let mlb_teams = [];
     const teams_json = JSON.parse(httpGet(mlb_teams_url));
-    for (var team of teams_json["teams"]) {
-        if (team["league"]["name"] == "American League" || team["league"]["name"] == "National League") {
+    for (const team of teams_json["teams"]) {
+        if (team["league"]["name"] === "American League" || team["league"]["name"] === "National League") {
             mlb_teams.push(team["name"]);
         }
     }
@@ -16,8 +16,8 @@ function get_mlb_teams() {
 }
 
 function get_game_from_json(team, game_json) {
-    for (var game of game_json["dates"][0]["games"]) {
-        if (get_name_from_team_item(game["teams"]["away"]) == team || get_name_from_team_item(game["teams"]["home"]) == team) {
+    for (const game of game_json["dates"][0]["games"]) {
+        if (get_name_from_team_item(game["teams"]["away"]) === team || get_name_from_team_item(game["teams"]["home"]) === team) {
             return game;
         }
     }
@@ -26,16 +26,16 @@ function get_game_from_json(team, game_json) {
 }
 
 function get_next_game(team) {
-    var current_game = get_game_from_json(team, JSON.parse(httpGet(mlb_games_url)));
+    const current_game = get_game_from_json(team, JSON.parse(httpGet(mlb_games_url)));
     if(current_game != null) {
         return current_game;
     }
 
-    var next_date = new Date();
-    for (var i=0; i<5; i++){
+    const next_date = new Date();
+    for (let i=0; i<5; i++){
         next_date.setDate(next_date.getDate()+1);
-        var next_date_string = next_date.toISOString().split('T')[0];
-        var game = get_game_from_json(team, 
+        const next_date_string = next_date.toISOString().split('T')[0];
+        const game = get_game_from_json(team,
             JSON.parse(httpGet(`${mlb_games_url}&startDate=${next_date_string}&endDate=${next_date_string}`)));
         if (game != null) {
             return game;
@@ -54,49 +54,49 @@ function get_name_from_team_item(team_json) {
 }
 
 function get_team_record(team) {
-    var game = get_next_game(team);
+    const game = get_next_game(team);
     if (game == null) {
-        return nulll;
+        return null;
     }
-    if (get_name_from_team_item(game["teams"]["away"]) == team) {
+    if (get_name_from_team_item(game["teams"]["away"]) === team) {
         return get_record_from_team_item(game["teams"]["away"]);
     }
-    if (get_name_from_team_item(game["teams"]["home"]) == team) {
+    if (get_name_from_team_item(game["teams"]["home"]) === team) {
         return get_record_from_team_item(game["teams"]["home"]);
     }
 }
 
 function get_game_information(team) {
-    var key_game = get_next_game(team);
+    const key_game = get_next_game(team);
     if (key_game == null)
         return null;
-    var home_team = key_game["teams"]["home"]["team"]["name"] == team;
-    if (key_game["status"]["codedGameState"] == "I") {
+    const home_team = key_game["teams"]["home"]["team"]["name"] === team;
+    if (key_game["status"]["codedGameState"] === "I") {
         return {
-            oponent: home_team 
+            opponent: home_team
                 ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
             home: home_team,
-            oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
+            opponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
             time: key_game["gameDate"],
             game_status: key_game["status"]["codedGameState"], 
             live_info: get_live_game_information(key_game)
         }
     }
-    if (key_game["status"]["codedGameState"] == "O" || key_game["status"]["codedGameState"] == "F") {
+    if (key_game["status"]["codedGameState"] === "O" || key_game["status"]["codedGameState"] === "F") {
         return {
-            oponent: home_team 
+            opponent: home_team
                 ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
             home: home_team,
-            oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
+            opponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
             final_info: get_final_game_information(key_game),
             game_status: key_game["status"]["codedGameState"]
         }
     }
     return {
-        oponent: home_team 
+        opponent: home_team
             ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
         home: home_team,
-        oponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
+        opponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
         time: key_game["gameDate"],
         game_status: key_game["status"]["codedGameState"]
     }

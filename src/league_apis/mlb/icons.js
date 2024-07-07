@@ -1,4 +1,4 @@
-var icon_paths = {
+const icon_paths = {
     "Los Angeles Angels": "angels.gif",
     "Houston Astros": "astros.gif",
     "Oakland Athletics": "athletics.gif",
@@ -29,4 +29,4 @@ var icon_paths = {
     "Minnesota Twins": "twins.gif",
     "Chicago White Sox": "white-sox.gif",
     "New York Yankees": "yankess.gif"
-  }
+};
