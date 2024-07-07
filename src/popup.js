@@ -3,10 +3,10 @@ function prepareInningIcon(isTop) {
     inningIcon.setAttribute("style", "display:inline;font-size:20px;color:black");
     inningIcon.setAttribute("class", "material-icons");
     if (isTop) {
-        inningIcon.textContent = "arrowDropUp";
+        inningIcon.textContent = "arrow_drop_up";
     }
     else {
-        inningIcon.textContent = "arrowDropDown";
+        inningIcon.textContent = "arrow_drop_up";
     }
     return inningIcon;
 }
@@ -16,10 +16,10 @@ function prepareOutsIcon(isOut) {
     outsIcon.setAttribute("style", "display:inline;font-size:15px;color:black");
     outsIcon.setAttribute("class", "material-icons");
     if (isOut) {
-        outsIcon.textContent = "radioButtonChecked";
+        outsIcon.textContent = "radio_button_checked";
     }
     else {
-        outsIcon.textContent = "radioButtonUnchecked";
+        outsIcon.textContent = "radio_button_unchecked";
     }
     return outsIcon;
 }
