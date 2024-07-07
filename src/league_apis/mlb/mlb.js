@@ -71,35 +71,21 @@ function getGameInformation(team) {
     if (keyGame == null)
         return null;
     const homeTeam = keyGame["teams"]["home"]["team"]["name"] === team;
-    if (keyGame["status"]["codedGameState"] === "I") {
-        return {
-            opponent: homeTeam
-                ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
-            home: homeTeam,
-            opponentRecord: getRecordFromTeamItem(homeTeam ? keyGame["teams"]["away"] : keyGame["teams"]["home"]),
-            time: keyGame["gameDate"],
-            gameStatus: keyGame["status"]["codedGameState"], 
-            liveInfo: getLiveGameInformation(keyGame)
-        }
-    }
-    if (keyGame["status"]["codedGameState"] === "O" || keyGame["status"]["codedGameState"] === "F") {
-        return {
-            opponent: homeTeam
-                ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
-            home: homeTeam,
-            opponentRecord: getRecordFromTeamItem(homeTeam ? keyGame["teams"]["away"] : keyGame["teams"]["home"]),
-            finalInfo: getFinalGameInformation(keyGame),
-            gameStatus: keyGame["status"]["codedGameState"]
-        }
-    }
-    return {
-        opponent: homeTeam
-            ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
+    let gameInfo = {
+        opponent: homeTeam ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
         home: homeTeam,
+        gameStatus: keyGame["status"]["codedGameState"],
         opponentRecord: getRecordFromTeamItem(homeTeam ? keyGame["teams"]["away"] : keyGame["teams"]["home"]),
-        time: keyGame["gameDate"],
-        gameStatus: keyGame["status"]["codedGameState"]
+    };
+    if (keyGame["status"]["codedGameState"] === "I") {
+        gameInfo.liveInfo = getLiveGameInformation(keyGame);
+        gameInfo.time = keyGame["gameDate"];
+    } else if (keyGame["status"]["codedGameState"] === "O" || keyGame["status"]["codedGameState"] === "F") {
+        gameInfo.finalInfo = getFinalGameInformation(keyGame);
+    } else {
+        gameInfo.time = keyGame["gameDate"];
     }
+    return gameInfo;
 }
 
 function getLiveGameInformation(game) {
@@ -115,13 +101,13 @@ function getLiveGameInformation(game) {
             hits: linescore["teams"]["home"]["hits"],
             errors: linescore["teams"]["home"]["errors"],
             LOB: linescore["teams"]["home"]["leftOnBase"]
-          },
-          away: {
+        },
+        away: {
             runs: linescore["teams"]["away"]["runs"],
             hits: linescore["teams"]["away"]["hits"],
             errors: linescore["teams"]["away"]["errors"],
             LOB: linescore["teams"]["away"]["leftOnBase"]
-          }
+        }
     }
 }
 
@@ -135,13 +121,13 @@ function getFinalGameInformation(game) {
             hits: linescore["teams"]["home"]["hits"],
             errors: linescore["teams"]["home"]["errors"],
             LOB: linescore["teams"]["home"]["leftOnBase"]
-          },
-          away: {
+        },
+        away: {
             runs: linescore["teams"]["away"]["runs"],
             hits: linescore["teams"]["away"]["hits"],
             errors: linescore["teams"]["away"]["errors"],
             LOB: linescore["teams"]["away"]["leftOnBase"]
-          }
+        }
     }
 }
 
