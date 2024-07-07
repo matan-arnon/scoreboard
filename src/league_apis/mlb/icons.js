@@ -1,4 +1,4 @@
-const icon_paths = {
+const iconPaths = {
     "Los Angeles Angels": "angels.gif",
     "Houston Astros": "astros.gif",
     "Oakland Athletics": "athletics.gif",

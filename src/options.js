@@ -4,26 +4,26 @@ const myParent = document.body;
 let mlbSelectList = document.createElement("select");
 mlbSelectList.id = "mlb-team";
 myParent.appendChild(mlbSelectList);
-mlb_teams = get_mlb_teams()
+mlbTeams = getMlbTeams()
 //Create and append the options
-for (let i = 0; i < mlb_teams.length; i++) {
-    let mlb_option = document.createElement("option");
-    mlb_option.value = mlb_teams[i];
-    mlb_option.text = mlb_teams[i];
-    mlbSelectList.appendChild(mlb_option);
+for (let i = 0; i < mlbTeams.length; i++) {
+    let mlbOption = document.createElement("option");
+    mlbOption.value = mlbTeams[i];
+    mlbOption.text = mlbTeams[i];
+    mlbSelectList.appendChild(mlbOption);
 }
 
 //Create and append mlb select list
 let nbaSelectList = document.createElement("select");
 nbaSelectList.id = "nba-team";
 myParent.appendChild(nbaSelectList);
-nba_teams = get_nba_teams()
+nbaTeams = getNbaTeams()
 //Create and append the options
-for (let i = 0; i < nba_teams.length; i++) {
-    let nba_option = document.createElement("option");
-    nba_option.value = nba_teams[i];
-    nba_option.text = nba_teams[i];
-    nbaSelectList.appendChild(nba_option);
+for (let i = 0; i < nbaTeams.length; i++) {
+    let nbaOption = document.createElement("option");
+    nbaOption.value = nbaTeams[i];
+    nbaOption.text = nbaTeams[i];
+    nbaSelectList.appendChild(nbaOption);
 }
 
 // Saves options to chrome.storage

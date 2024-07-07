@@ -3,10 +3,10 @@ function prepareInningIcon(isTop) {
     inningIcon.setAttribute("style", "display:inline;font-size:20px;color:black");
     inningIcon.setAttribute("class", "material-icons");
     if (isTop) {
-        inningIcon.textContent = "arrow_drop_up";
+        inningIcon.textContent = "arrowDropUp";
     }
     else {
-        inningIcon.textContent = "arrow_drop_down";
+        inningIcon.textContent = "arrowDropDown";
     }
     return inningIcon;
 }
@@ -16,17 +16,17 @@ function prepareOutsIcon(isOut) {
     outsIcon.setAttribute("style", "display:inline;font-size:15px;color:black");
     outsIcon.setAttribute("class", "material-icons");
     if (isOut) {
-        outsIcon.textContent = "radio_button_checked";
+        outsIcon.textContent = "radioButtonChecked";
     }
     else {
-        outsIcon.textContent = "radio_button_unchecked";
+        outsIcon.textContent = "radioButtonUnchecked";
     }
     return outsIcon;
 }
 
 function prepareTeamIcon(team) {
     let img = document.createElement('img');
-    img.src = `../icons/${get_icon_path(team)}`;
+    img.src = `../icons/${getIconPath(team)}`;
     return img;
 }
 
@@ -41,41 +41,41 @@ window.onload = function() {
 
     chrome.storage.sync.get({favoriteMlbTeam:"nope", favoriteNbaTeam:"nope"}, (items) =>{
         if (items.favoriteMlbTeam !== "nope") {
-            let mlb_team = document.getElementById("fav-mlb-team");
-            mlb_team.textContent = `${items.favoriteMlbTeam} (${get_team_record(items.favoriteMlbTeam)})`;
+            let mlbTeam = document.getElementById("fav-mlb-team");
+            mlbTeam.textContent = `${items.favoriteMlbTeam} (${getTeamRecord(items.favoriteMlbTeam)})`;
             console.log("fav team", items.favoriteMlbTeam);
-            const todays_game= get_game_information(items.favoriteMlbTeam);
-            const location = todays_game.home ? "vs" : "@"
-            mlb_team.textContent += ` ${location} ${todays_game.opponent} (${todays_game.opponent_record})`;
+            const todaysGame= getGameInformation(items.favoriteMlbTeam);
+            const location = todaysGame.home ? "vs" : "@"
+            mlbTeam.textContent += ` ${location} ${todaysGame.opponent} (${todaysGame.opponentRecord})`;
 
-            const team_icon = prepareTeamIcon(items.favoriteMlbTeam);
-            mlb_team.insertAdjacentElement("afterend", team_icon);
-            const opponent_icon = prepareTeamIcon(todays_game.opponent);
-            team_icon.insertAdjacentElement("afterend", opponent_icon);
+            const teamIcon = prepareTeamIcon(items.favoriteMlbTeam);
+            mlbTeam.insertAdjacentElement("afterend", teamIcon);
+            const opponentIcon = prepareTeamIcon(todaysGame.opponent);
+            teamIcon.insertAdjacentElement("afterend", opponentIcon);
 
-            if (todays_game.game_status === "S" || todays_game.game_status === "P") {
-                const start_time = document.getElementById("gameday");
-                start_time.textContent = `Start time: ${new Date(todays_game.time).toLocaleString()}`;
+            if (todaysGame.gameStatus === "S" || todaysGame.gameStatus === "P") {
+                const startTime = document.getElementById("gameday");
+                startTime.textContent = `Start time: ${new Date(todaysGame.time).toLocaleString()}`;
             }
-            if (todays_game.game_status === "I") {
-                const live_info = document.getElementById("gameday");
-                if (todays_game.home) {
-                    live_info.textContent = `${todays_game.live_info.home.runs} - ${todays_game.live_info.away.runs}`;
+            if (todaysGame.gameStatus === "I") {
+                const liveInfo = document.getElementById("gameday");
+                if (todaysGame.home) {
+                    liveInfo.textContent = `${todaysGame.liveInfo.home.runs} - ${todaysGame.liveInfo.away.runs}`;
                 }
                 else {
-                    live_info.textContent = `${todays_game.live_info.away.runs} - ${todays_game.live_info.home.runs}`;
+                    liveInfo.textContent = `${todaysGame.liveInfo.away.runs} - ${todaysGame.liveInfo.home.runs}`;
                 }
-                let inningIcon = prepareInningIcon(todays_game.live_info.isTop);
+                let inningIcon = prepareInningIcon(todaysGame.liveInfo.isTop);
                 let inningOuts = document.getElementById("inning-outs")
-                inningOuts.textContent = todays_game.live_info.inning;
+                inningOuts.textContent = todaysGame.liveInfo.inning;
                 inningOuts.insertAdjacentElement("beforeend", inningIcon);
                 let outsIcon;
-                for (let i = 0; i < todays_game.live_info.outs; i++) {
+                for (let i = 0; i < todaysGame.liveInfo.outs; i++) {
                     outsIcon = prepareOutsIcon(true);
                     inningIcon.insertAdjacentElement("beforeend", outsIcon);
                 }
-                for (let i = 0; i < 3 - todays_game.live_info.outs; i++) {
-                    if (todays_game.live_info.outs > 0) {
+                for (let i = 0; i < 3 - todaysGame.liveInfo.outs; i++) {
+                    if (todaysGame.liveInfo.outs > 0) {
                         outsIcon.insertAdjacentElement("beforeend", prepareOutsIcon(false));
                     }
                     else {
@@ -83,18 +83,18 @@ window.onload = function() {
                     }
                 }
             }
-            if (todays_game.game_status === "O" || todays_game.game_status === "F") {
-                let score_element = document.getElementById("gameday");
+            if (todaysGame.gameStatus === "O" || todaysGame.gameStatus === "F") {
+                let scoreElement = document.getElementById("gameday");
                 let inningOuts = document.getElementById("inning-outs")
                 inningOuts.textContent = "Final"
-                let final_score;
-                if (todays_game.home) {
-                    final_score = `${todays_game.final_info.home.runs} - ${todays_game.final_info.away.runs}`;
+                let finalScore;
+                if (todaysGame.home) {
+                    finalScore = `${todaysGame.finalInfo.home.runs} - ${todaysGame.finalInfo.away.runs}`;
                 }
                 else {
-                    final_score = `${todays_game.final_info.away.runs} - ${todays_game.final_info.home.runs}`;
+                    finalScore = `${todaysGame.finalInfo.away.runs} - ${todaysGame.finalInfo.home.runs}`;
                 }
-                score_element.textContent = final_score;
+                scoreElement.textContent = finalScore;
             }
         }
     });

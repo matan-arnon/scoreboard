@@ -1,11 +1,11 @@
-const nba_teams_url = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams";
+const nbaTeamsUrl = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams";
 
-function get_nba_teams() {
-    let nba_teams = [];
-    const teams_json = JSON.parse(httpGet(nba_teams_url));
-    for (const team of teams_json["sports"][0]["leagues"][0]["teams"]) {
-        nba_teams.push(team["team"]["displayName"]);
+function getNbaTeams() {
+    let nbaTeams = [];
+    const teamsJson = JSON.parse(httpGet(nbaTeamsUrl));
+    for (const team of teamsJson["sports"][0]["leagues"][0]["teams"]) {
+        nbaTeams.push(team["team"]["displayName"]);
     }
 
-    return nba_teams
+    return nbaTeams
 }

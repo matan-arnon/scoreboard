@@ -1,23 +1,23 @@
-const base_url = "https://statsapi.mlb.com";
+const baseUrl = "https://statsapi.mlb.com";
 
-const mlb_games_url = `${base_url}/api/v1/schedule/games/?sportId=1`;
-const mlb_teams_url = `${base_url}/api/v1/teams`;
+const mlbGamesUrl = `${baseUrl}/api/v1/schedule/games/?sportId=1`;
+const mlbTeamsUrl = `${baseUrl}/api/v1/teams`;
 
-function get_mlb_teams() {
-    let mlb_teams = [];
-    const teams_json = JSON.parse(httpGet(mlb_teams_url));
-    for (const team of teams_json["teams"]) {
+function getMlbTeams() {
+    let mlbTeams = [];
+    const teamsJson = JSON.parse(httpGet(mlbTeamsUrl));
+    for (const team of teamsJson["teams"]) {
         if (team["league"]["name"] === "American League" || team["league"]["name"] === "National League") {
-            mlb_teams.push(team["name"]);
+            mlbTeams.push(team["name"]);
         }
     }
 
-    return mlb_teams
+    return mlbTeams
 }
 
-function get_game_from_json(team, game_json) {
-    for (const game of game_json["dates"][0]["games"]) {
-        if (get_name_from_team_item(game["teams"]["away"]) === team || get_name_from_team_item(game["teams"]["home"]) === team) {
+function getGameFromJson(team, gameJson) {
+    for (const game of gameJson["dates"][0]["games"]) {
+        if (getNameFromTeamItem(game["teams"]["away"]) === team || getNameFromTeamItem(game["teams"]["home"]) === team) {
             return game;
         }
     }
@@ -25,18 +25,18 @@ function get_game_from_json(team, game_json) {
     return null;
 }
 
-function get_next_game(team) {
-    const current_game = get_game_from_json(team, JSON.parse(httpGet(mlb_games_url)));
-    if(current_game != null) {
-        return current_game;
+function getNextGame(team) {
+    const currentGame = getGameFromJson(team, JSON.parse(httpGet(mlbGamesUrl)));
+    if(currentGame != null) {
+        return currentGame;
     }
 
-    const next_date = new Date();
+    const nextDate = new Date();
     for (let i=0; i<5; i++){
-        next_date.setDate(next_date.getDate()+1);
-        const next_date_string = next_date.toISOString().split('T')[0];
-        const game = get_game_from_json(team,
-            JSON.parse(httpGet(`${mlb_games_url}&startDate=${next_date_string}&endDate=${next_date_string}`)));
+        nextDate.setDate(nextDate.getDate()+1);
+        const nextDateString = nextDate.toISOString().split('T')[0];
+        const game = getGameFromJson(team,
+            JSON.parse(httpGet(`${mlbGamesUrl}&startDate=${nextDateString}&endDate=${nextDateString}`)));
         if (game != null) {
             return game;
         }
@@ -45,65 +45,65 @@ function get_next_game(team) {
     return null;
 }
 
-function get_record_from_team_item(team_json) {
-    return `${team_json["leagueRecord"]["wins"]}-${team_json["leagueRecord"]["losses"]}`
+function getRecordFromTeamItem(teamJson) {
+    return `${teamJson["leagueRecord"]["wins"]}-${teamJson["leagueRecord"]["losses"]}`
 }
 
-function get_name_from_team_item(team_json) {
-    return team_json["team"]["name"]
+function getNameFromTeamItem(teamJson) {
+    return teamJson["team"]["name"]
 }
 
-function get_team_record(team) {
-    const game = get_next_game(team);
+function getTeamRecord(team) {
+    const game = getNextGame(team);
     if (game == null) {
         return null;
     }
-    if (get_name_from_team_item(game["teams"]["away"]) === team) {
-        return get_record_from_team_item(game["teams"]["away"]);
+    if (getNameFromTeamItem(game["teams"]["away"]) === team) {
+        return getRecordFromTeamItem(game["teams"]["away"]);
     }
-    if (get_name_from_team_item(game["teams"]["home"]) === team) {
-        return get_record_from_team_item(game["teams"]["home"]);
+    if (getNameFromTeamItem(game["teams"]["home"]) === team) {
+        return getRecordFromTeamItem(game["teams"]["home"]);
     }
 }
 
-function get_game_information(team) {
-    const key_game = get_next_game(team);
-    if (key_game == null)
+function getGameInformation(team) {
+    const keyGame = getNextGame(team);
+    if (keyGame == null)
         return null;
-    const home_team = key_game["teams"]["home"]["team"]["name"] === team;
-    if (key_game["status"]["codedGameState"] === "I") {
+    const homeTeam = keyGame["teams"]["home"]["team"]["name"] === team;
+    if (keyGame["status"]["codedGameState"] === "I") {
         return {
-            opponent: home_team
-                ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
-            home: home_team,
-            opponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
-            time: key_game["gameDate"],
-            game_status: key_game["status"]["codedGameState"], 
-            live_info: get_live_game_information(key_game)
+            opponent: homeTeam
+                ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
+            home: homeTeam,
+            opponentRecord: getRecordFromTeamItem(homeTeam ? keyGame["teams"]["away"] : keyGame["teams"]["home"]),
+            time: keyGame["gameDate"],
+            gameStatus: keyGame["status"]["codedGameState"], 
+            liveInfo: getLiveGameInformation(keyGame)
         }
     }
-    if (key_game["status"]["codedGameState"] === "O" || key_game["status"]["codedGameState"] === "F") {
+    if (keyGame["status"]["codedGameState"] === "O" || keyGame["status"]["codedGameState"] === "F") {
         return {
-            opponent: home_team
-                ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
-            home: home_team,
-            opponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
-            final_info: get_final_game_information(key_game),
-            game_status: key_game["status"]["codedGameState"]
+            opponent: homeTeam
+                ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
+            home: homeTeam,
+            opponentRecord: getRecordFromTeamItem(homeTeam ? keyGame["teams"]["away"] : keyGame["teams"]["home"]),
+            finalInfo: getFinalGameInformation(keyGame),
+            gameStatus: keyGame["status"]["codedGameState"]
         }
     }
     return {
-        opponent: home_team
-            ? get_name_from_team_item(key_game["teams"]["away"]) : get_name_from_team_item(key_game["teams"]["home"]),
-        home: home_team,
-        opponent_record: get_record_from_team_item(home_team ? key_game["teams"]["away"] : key_game["teams"]["home"]),
-        time: key_game["gameDate"],
-        game_status: key_game["status"]["codedGameState"]
+        opponent: homeTeam
+            ? getNameFromTeamItem(keyGame["teams"]["away"]) : getNameFromTeamItem(keyGame["teams"]["home"]),
+        home: homeTeam,
+        opponentRecord: getRecordFromTeamItem(homeTeam ? keyGame["teams"]["away"] : keyGame["teams"]["home"]),
+        time: keyGame["gameDate"],
+        gameStatus: keyGame["status"]["codedGameState"]
     }
 }
 
-function get_live_game_information(game) {
-    const liveData = JSON.parse(httpGet(base_url + game["link"]))["liveData"]
+function getLiveGameInformation(game) {
+    const liveData = JSON.parse(httpGet(baseUrl + game["link"]))["liveData"]
     const linescore = liveData["linescore"];
 
     return {
@@ -125,8 +125,8 @@ function get_live_game_information(game) {
     }
 }
 
-function get_final_game_information(game) {
-    const liveData = JSON.parse(httpGet(base_url + game["link"]))["liveData"]
+function getFinalGameInformation(game) {
+    const liveData = JSON.parse(httpGet(baseUrl + game["link"]))["liveData"]
     const linescore = liveData["linescore"];
 
     return {
@@ -145,6 +145,6 @@ function get_final_game_information(game) {
     }
 }
 
-function get_icon_path(team) {
-    return `mlb/${icon_paths[team]}`;
+function getIconPath(team) {
+    return `mlb/${iconPaths[team]}`;
 }
