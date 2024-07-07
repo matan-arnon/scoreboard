@@ -97,9 +97,5 @@ window.onload = function() {
                 score_element.textContent = final_score;
             }
         }
-        if (items.favoriteNbaTeam !== "nope") {
-            let nba_team_header = document.getElementById("fav-nba-team");
-            nba_team_header.textContent = items.favoriteNbaTeam;
-        }
-    })
+    });
 }
